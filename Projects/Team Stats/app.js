@@ -1,5 +1,5 @@
 const team = {
-    _players = [
+    _players: [
         {
             firstName: 'John',
             lastName: 'Smith',
@@ -16,7 +16,7 @@ const team = {
             age: 19
         }
     ],
-    _games = [
+    _games: [
         {
             opponent: 'Broncos',
             teamPoints: '42',
@@ -48,3 +48,8 @@ const team = {
         this.players.push(player);
     }
 }
+team.addPlayer('Steph', 'Curry', 28);
+team.addPlayer('Lisa', 'Leslie', 44);
+team.addPlayer('Bugs', 'Bunny', 76);
+
+console.log(team.players);
