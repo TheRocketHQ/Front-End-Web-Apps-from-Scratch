@@ -36,8 +36,8 @@ class Media {
 class Book extends Media {
     constructor(author, title, pages){
         super(title);
-        _author = this.author;
-        _pages = this.pages;
+        this._author = author;
+        this._pages = pages;
     }
 
     get author(){
@@ -48,9 +48,29 @@ class Book extends Media {
     }
 }
 
+class Movie extends Media {
+    constructor(director, title, runtime){
+        super(title);
+        this._director = director;
+        this._runtime = runtime; 
+    }
+}
 
+const historyOfEverything = new Book('Bill Bryson', 'A story of nearly Everything', 544);
+historyOfEverything.toggleCheckedOutStatus();
+console.log(historyOfEverything);
+historyOfEverything.addRating(4);
+historyOfEverything.addRating(5);
+historyOfEverything.addRating(6);
+console.log(historyOfEverything.getAverageRating());
 
-
+const speed = new Movie('Jan de Bont', 'Speed', 116);
+speed.toggleCheckedOutStatus();
+console.log(speed.isCheckedOut());
+speed.addRating(1);
+speed.addRating(5);
+speed.addRating(1);
+console.log(speed.getAverageRating());
 
 
 
