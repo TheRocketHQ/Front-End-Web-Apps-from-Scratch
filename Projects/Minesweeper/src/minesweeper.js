@@ -1,12 +1,41 @@
  class Game {
+  constructor(numberOfRows, numberOfColumns, numberOfBombs) {
+    this._board = new Board(numberOfRows, numberOfColumns, numberOfBombs);
+  }
 
+  playMove(rowIndex, columnIndex) {
+    this._board.flipTile(rowIndex, columnIndex);
+    if (this._board.playerBoard[rowIndex][columnIndex] === 'B') {
+      console.log('Game Over! Final Board:');
+      this._board.print();
+    } else if (!this._board.hasNonBombEmptySpaces()) {
+      console.log('Congratulations, you won!');
+    } else {
+      console.log('Current board:');
+      this._board.print();
+    }
  }
+}
 
  class Board {
    constructor(numberOfRows, numberOfColumns, numberOfBombs) {
+    this._numberOfBombs = numberOfBombs;
+    this._numberOfEmptySpaces = numberOfRows * numberOfColumns;
      this._playerBoard = Board.generatePlayerBoard(numberOfRows, numberOfColumns);
      this._bombBoard = Board.generateBombBoard(numberOfRows, numberOfColumns, numberOfBombs);
    }
+
+   flipTile (flipRow, flipColumn) {
+    if(this._playerBoard[flipRow][flipColumn]){
+      return;
+    }
+    if(this._bombBoard[flipRow][flipColumn] === 'B'){
+      this._playerBoard[rowIndex][columnIndex] = 'B';
+    } else {
+      this._playerBoard[rowIndex][columnIndex] = this.getNumberOfNeighborBombs(rowIndex, columnIndex);
+    }
+    this._numberOfEmptySpaces--;
+  };
 
    getNumberOfNeighborBombs (rowIndex, columnIndex) {
     const neighborOffsets = [
@@ -29,25 +58,20 @@
       const neighborColumnIndex = columnIndex + offset[1];
       if (neighborRowIndex >= 0 && neighborRowIndex < numberOfRows &&
         neighborColumnIndex >= 0 && neighborColumnIndex < numberOfColumns) {
-        if (bombBoard[neighborRowIndex][neighborColumnIndex] === 'B') {
+        if (this._bombBoard[neighborRowIndex][neighborColumnIndex] === 'B') {
           numberOfBombs++;
         }
       }
     });
     return numberOfBombs;
   };
+  hasNonBombEmptySpaces() {
+    return this._numberOfEmptySpaces !== this._numberOfBombs;
+  }
 
-   flipTile (flipRow, flipColumn) {
-     if(this._playerBoard[flipRow][flipColumn]){
-       return;
-     }
-     if(this._bombBoard[flipRow][flipColumn] === 'B'){
-      this._playerBoard
-     }
-   };
-   print() {
-     console.log(this._playerBoard.map(row => row.join(' | ')).join('\n'))
-   }
+  print() {
+    console.log(this._playerBoard.map(row => row.join(' | ')).join('\n'));
+  }
 
    static generatePlayerBoard(numberOfRows, numberOfColumns) {
      const board = [];
@@ -89,8 +113,5 @@
 
  }
 
- const board = new Board(3, 2, 4);
- board.print();
- board.flipTile(1,1);
- console.log('Current Board');
- board.print();
+const g = new Game(3, 3, 3);
+g.playMove(0, 0);
