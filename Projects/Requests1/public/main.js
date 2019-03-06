@@ -1,51 +1,76 @@
-const jsonButton = document.querySelector('#generate');
-const buttonContainer = document.querySelector('#buttonContainer');
-const display = document.querySelector('#displayContainer');
-const collection = ["Another", "More", "Next", "Continue", "Keep going", "Click me", "A new one"];
+// NOTE: wordSmith functions from lines 4 - 39
+// NOTE: byteSize functions from lines 41 - 76 (remember to add your API key!)
 
-const generateJson = () => {
+// information to reach API
+const dataMuseUrl = 'https://api.datamuse.com/words?';
+const queryParams = 'rel_jjb=';
+
+// selecting page elements
+const inputField = document.querySelector('#input');
+const submit = document.querySelector('#submit');
+const responseField = document.querySelector('#responseField');
+
+// AJAX function
+const getSuggestions = () => {
+  const wordQuery = inputField.value;
+  const endPoint = dataMuseUrl + queryParams + wordQuery;
+
   const xhr = new XMLHttpRequest();
   xhr.responseType = 'json';
-  
+
   xhr.onreadystatechange = () => {
     if (xhr.readyState === XMLHttpRequest.DONE) {
-  renderResponse(xhr.response);
-      changeButton();
+      renderWordResponse(xhr.response);
     }
-  }
-  xhr.open('GET', 'https://jsonplaceholder.typicode.com/users');
+  };
+  xhr.open('GET', endPoint);
   xhr.send();
 }
 
-const formatJson = (resJson) => {
-  resJson = JSON.stringify(resJson);
-  let counter = 0;
-  return resJson.split('')
-  .map(char => {
-    switch (char) {
-      case ',':
-        return `,\n${' '.repeat(counter * 2)}`;
-      case '{':
-        counter += 1;
-        return `{\n${' '.repeat(counter * 2)}`;
-      case '}':
-        counter -= 1;
-        return `\n${' '.repeat(counter * 2)}}`;
-      default:
-        return char;
+// clear previous results and display results to webpage
+const displaySuggestions = (event) => {
+  event.preventDefault();
+  while(responseField.firstChild){
+    responseField.removeChild(responseField.firstChild);
+  };
+  getSuggestions();
+};
+
+submit.addEventListener('click', displaySuggestions);
+
+// information to reach Rebrandly API
+const apiKey = '<Your API Key>';
+const rebrandlyUrl = 'https://api.rebrandly.com/v1/links';
+
+// element selector
+const shortenButton = document.querySelector('#shorten');
+
+// AJAX functions
+const shortenUrl = () => {
+  const urlToShorten = inputField.value;
+  const data = JSON.stringify({destination: urlToShorten});
+
+  const xhr = new XMLHttpRequest();
+  xhr.responseType = 'json';
+
+  xhr.onreadystatechange = () => {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+      renderByteResponse(xhr.response);
     }
-  })
-  .join('');
+  };
+  xhr.open('POST', rebrandlyUrl);
+  xhr.setRequestHeader('Content-type', 'application/json');
+	xhr.setRequestHeader('apikey', apiKey);
+  xhr.send(data);
 }
 
-const renderResponse = (jsonResponse) => {
-  const jsonSelection = Math.floor(Math.random() * 10);
-  display.innerHTML = `<pre>${formatJson(jsonResponse[jsonSelection])}</pre>`;
-}
+// Clear page and call AJAX functions
+const displayShortUrl = (event) => {
+  event.preventDefault();
+  while(responseField.firstChild){
+    responseField.removeChild(responseField.firstChild);
+  };
+  shortenUrl();
+};
 
-const changeButton = () => {
-  const newText = Math.floor(Math.random() * 7);
-  jsonButton.innerHTML = `${collection[newText]}!`;
-}
-
-jsonButton.addEventListener('click', generateJson);
+shortenButton.addEventListener('click', displayShortUrl);
